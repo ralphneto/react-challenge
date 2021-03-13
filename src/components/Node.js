@@ -5,15 +5,24 @@ import {
   ExpansionPanel,
   ExpansionPanelSummary,
   Typography,
-  ExpansionPanelDetails,
   makeStyles,
   Box,
 } from "@material-ui/core";
 import colors from "../constants/colors";
 import Status from "./Status";
+import Block from "./Block";
 
 const Node = ({ node, expanded, toggleNodeExpanded }) => {
   const classes = useStyles();
+  
+  let blocks = []; //Create a blocks variable
+  if (node.blocks !== undefined) { //Verify if we got the blocks in our node variable
+    blocks = node.blocks.data.map((block) => { //iterate over each block for this node
+      return <Block key={block.id} data={block} /> //Create the JSX element for displaying this block
+    });
+
+  }
+
   return (
     <ExpansionPanel
       elevation={3}
@@ -45,9 +54,10 @@ const Node = ({ node, expanded, toggleNodeExpanded }) => {
           <Status loading={node.loading} online={node.online} />
         </Box>
       </ExpansionPanelSummary>
-      <ExpansionPanelDetails>
+      {/* <ExpansionPanelDetails>
         <Typography>Blocks go here</Typography>
-      </ExpansionPanelDetails>
+      </ExpansionPanelDetails> */}
+      {blocks} {/* Display the list of blocks */}
     </ExpansionPanel>
   );
 };

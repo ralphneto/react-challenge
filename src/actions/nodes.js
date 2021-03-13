@@ -33,9 +33,19 @@ export function checkNodeStatus(node) {
         dispatch(checkNodeStatusFailure(node));
       }
 
-      const json = await res.json();
+      let json = await res.json();
 
-      dispatch(checkNodeStatusSuccess(node, json));
+      const blocksResponse = await fetch(`${node.url}/api/v1/blocks`); //If the Node Status succeed, call the api to retrieve the blocks for this node
+
+      if(blocksResponse.status >= 400) {
+        dispatch(checkNodeStatusFailure(node)); //In case of failure, dispatch the same NodeStatusFailure
+      }
+
+      const jsonBlocks = await blocksResponse.json(); //Wait for the blocks response
+      
+      json.blocks = jsonBlocks; //Add Blocks to status node response that we got before
+
+      dispatch(checkNodeStatusSuccess(node, json)); //Dispatch the old response plus the blocks for this node.
     } catch (err) {
       dispatch(checkNodeStatusFailure(node));
     }
